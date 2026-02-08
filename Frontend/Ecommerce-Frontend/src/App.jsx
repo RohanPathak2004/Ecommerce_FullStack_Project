@@ -1,0 +1,37 @@
+import './App.css'
+import {Route, Routes} from "react-router";
+import NavigationBar from "./components/NavigationBar.jsx";
+import Home from "./pages/Home.jsx";
+import AddProduct from "./pages/AddProduct.jsx";
+import Orders from "./pages/Orders.jsx";
+import Cart from "./pages/Cart.jsx";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import Product from "./pages/Product.jsx";
+import UpdateProduct from "./pages/UpdateProduct.jsx";
+
+const queryClient = new QueryClient();
+
+function App() {
+
+
+    return (
+        <>
+            <QueryClientProvider client={queryClient}>
+
+                <NavigationBar/>
+
+                <Routes>
+                    <Route path={'/'} element={<Home/>}/>
+                    <Route path={'/product/:id'} element={<Product/>}/>
+                    <Route path={'/add'} element={<AddProduct/>}/>
+                    <Route path={'/orders'} element={<Orders/>}/>
+                    <Route path={'/cart'} element={<Cart/>}/>
+                    <Route path={'/product/update/:id'} element={<UpdateProduct/>}/>
+                </Routes>
+            </QueryClientProvider>
+        </>
+    )
+
+}
+
+export default App

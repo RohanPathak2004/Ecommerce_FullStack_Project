@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@tailwind utilities;
+
+.form-value-container{
+    display: flex;
+    flex-direction: column;
+    padding-left: 2;
+}

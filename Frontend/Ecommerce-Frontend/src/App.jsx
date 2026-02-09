@@ -8,25 +8,42 @@ import Cart from "./pages/Cart.jsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import Product from "./pages/Product.jsx";
 import UpdateProduct from "./pages/UpdateProduct.jsx";
+import {useEffect, useState} from "react";
+import {toast, ToastContainer} from "react-toastify";
 
 const queryClient = new QueryClient();
 
 function App() {
 
+    const [addedToCart,setAddedToCart] = useState(0);
+    const [updateNotification,setUpdateNotification] = useState(0);
+    const addNotify = ()=>toast("Product Added To Cart")
+    const updateNotify = ()=>toast("Updated Product");
+    useEffect(()=>{
+        if(addedToCart===0) return;
+        console.log(addedToCart);
+        addNotify();
+    },[addedToCart])
+
+    useEffect(() => {
+        if(updateNotification===0) return;
+        console.log(updateNotification)
+        updateNotify();
+    }, [updateNotification]);
 
     return (
         <>
             <QueryClientProvider client={queryClient}>
 
                 <NavigationBar/>
-
+                <ToastContainer/>
                 <Routes>
                     <Route path={'/'} element={<Home/>}/>
-                    <Route path={'/product/:id'} element={<Product/>}/>
+                    <Route path={'/product/:id'} element={<Product setAddedToCart={setAddedToCart}/>}/>
                     <Route path={'/add'} element={<AddProduct/>}/>
                     <Route path={'/orders'} element={<Orders/>}/>
                     <Route path={'/cart'} element={<Cart/>}/>
-                    <Route path={'/product/update/:id'} element={<UpdateProduct/>}/>
+                    <Route path={'/product/update/:id'} element={<UpdateProduct setUpdateNotification={setUpdateNotification} />}/>
                 </Routes>
             </QueryClientProvider>
         </>

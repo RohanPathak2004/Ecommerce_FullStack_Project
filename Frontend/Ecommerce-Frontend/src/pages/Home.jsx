@@ -6,10 +6,7 @@ import {Link} from "react-router";
 
 const Home = () => {
 
-    const fetchProducts = async () => {
-        const res = await axios.get('http://localhost:8080/api/products')
-        return res.data;
-    }
+
     const {data: products, isLoading, isError, error} = useQuery({
         queryFn: () => axios.get('http://localhost:8080/api/products').then(res => res.data),
         queryKey: ["products"]

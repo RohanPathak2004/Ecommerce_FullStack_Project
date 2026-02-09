@@ -2,12 +2,10 @@ import React from 'react'
 import {Link, useLocation} from "react-router";
 import noimage from "../assets/noimage.png";
 import { ToastContainer, toast } from 'react-toastify';
-const Product = () => {
+const Product = ({setAddedToCart}) => {
     const location = useLocation();
     const product = location.state
-    const notify = () => toast("Product Added To Cart!!");
-    const notifyForSmallDevice = () => toast("Product Added To Cart!!");
-    console.log(product.productAvailable);
+
 
 
 
@@ -53,11 +51,12 @@ const Product = () => {
                         <span className="font-bold text-2xl text-black">${product.price}</span>
                         <div className="w-full">
                          <button
-                                onClick={notify}
+                             disabled={!product.productAvailable}
+                                onClick={()=>setAddedToCart(prev=>prev+1)}
                                 className="text-[1.2rem] w-[60%]  px-6 py-1 bg-blue-500 text-center items-center text-white rounded-md cursor-pointer">Add
                                 to Cart
                             </button>
-                        <ToastContainer className='Toastify__bounce-enter--bottom-right'/>
+
                         </div>
                         <div className="w-full flex justify-start space-x-1.5">
                             <button
@@ -92,7 +91,7 @@ const Product = () => {
                         }}/>
                     </div>
                 </div>
-                <div className="flex flex-col items-baseline px-2 text-[1.2rem] text-gray-700 flex flex-col gap-2">
+                <div className="flex flex-col items-baseline px-2 text-[1.2rem] text-gray-700  gap-2">
                     <div className="w-full flex justify-between items-center">
                          <span
                              className={` text-white px-2 py-1 rounded-md  ${(product.productAvailable) ? "bg-green-400" : "bg-red-500"}`}>{product.productAvailable ? "Available" : "Currently not Available"}</span>
@@ -122,9 +121,10 @@ const Product = () => {
                     </div>
                 </div>
                 <div className='w-full flex flex-col py-2.5 gap-2'>
-                    <div className="w-full">
+                    <div className="w-full flex flex-col justify-center">
                     <button
-
+                        disabled={!product.productAvailable}
+                        onClick={()=>setAddedToCart(prev=>prev+1)}
                         className="text-[1.2rem] px-6 py-1 bg-blue-500 text-center items-center text-white rounded-2xl">Add
                         to Cart
                     </button>
@@ -136,7 +136,7 @@ const Product = () => {
                         </button>
                         <button
                             className="text-[1.2rem] px-6 py-1 bg-orange-400 text-center items-center text-white rounded-2xl">
-                            <Link to={`/product/update/${product.id}`} state={product}>
+                            <Link to={`/product/update/${product.id}`} state={product.id}>
                                 Update
                             </Link>
                         </button>

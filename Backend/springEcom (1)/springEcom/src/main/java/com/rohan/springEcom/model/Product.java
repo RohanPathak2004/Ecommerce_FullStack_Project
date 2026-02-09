@@ -19,7 +19,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id; // changed int to Integer bcs from frontend i am sending null value and due to this error in insertion of new product
     private String name;
     private String description;
     private String brand;

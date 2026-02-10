@@ -3,14 +3,12 @@ import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import ProductCard from "../components/ProductCard.jsx";
 import {Link} from "react-router";
+import {useProductContext} from "../context/ProductContext.jsx";
 
 const Home = () => {
 
 
-    const {data: products, isLoading, isError, error} = useQuery({
-        queryFn: () => axios.get('http://localhost:8080/api/products').then(res => res.data),
-        queryKey: ["products"]
-    });
+     const {products,isLoading,isError,error} = useProductContext();
 
     console.log(products)
     if (isLoading) return (<div className='w-full text-2xl text-center h-full' >Loading products</div>)

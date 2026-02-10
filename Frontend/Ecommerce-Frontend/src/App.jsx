@@ -10,6 +10,8 @@ import Product from "./pages/Product.jsx";
 import UpdateProduct from "./pages/UpdateProduct.jsx";
 import {useEffect, useState} from "react";
 import {toast, ToastContainer} from "react-toastify";
+import {Provider} from "react-redux";
+import {ProductProvider} from "./context/ProductContext.jsx";
 
 const queryClient = new QueryClient();
 
@@ -31,10 +33,17 @@ function App() {
         updateNotify();
     }, [updateNotification]);
 
+
+    const ContextComposer = ({providers,children})=>{
+        return providers.reduceRight((acc,Provider)=>{
+            return <Provider>{acc}</Provider>
+        },children);
+    }
+
     return (
         <>
             <QueryClientProvider client={queryClient}>
-
+                <ContextComposer providers={[ProductProvider]}>
                 <NavigationBar/>
                 <ToastContainer/>
                 <Routes>
@@ -45,6 +54,7 @@ function App() {
                     <Route path={'/cart'} element={<Cart/>}/>
                     <Route path={'/product/update/:id'} element={<UpdateProduct setUpdateNotification={setUpdateNotification} />}/>
                 </Routes>
+                </ContextComposer>
             </QueryClientProvider>
         </>
     )

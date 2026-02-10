@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {toast, ToastContainer} from "react-toastify";
 import axios from "axios";
+import {useNavigate} from "react-router";
 
 const AddProduct = () => {
     const [product, setProduct] = useState(
@@ -19,7 +20,7 @@ const AddProduct = () => {
 
     const [image,setImage] = useState();
     const [imageUploaded, setImageUploaded] = useState(false);
-
+    const navigate = useNavigate();
     const onChangeHandler = (e) => {
         const {name, value} = e.target //get the name attribute from the html and value
         setProduct({

@@ -1,146 +1,137 @@
-import React from 'react'
-import {Link, useLocation} from "react-router";
+import React, {useState} from 'react'
+import {Link, useLocation, useNavigate} from "react-router";
 import noimage from "../assets/noimage.png";
-import { ToastContainer, toast } from 'react-toastify';
+import {ToastContainer, toast} from 'react-toastify';
+import axios from "axios";
+
 const Product = ({setAddedToCart}) => {
     const location = useLocation();
     const product = location.state
+    const [askClientForDeletion, setAskClientForDeletion] = useState(false);
+    const navigate = useNavigate();
+
+    const handleProductDeletion = async () => {
+        if (askClientForDeletion) {
+
+            const res = await axios.delete(`http://localhost:8080/api/product/${product.id}`)
+                .then(res => {
+                    if (res.status === 200) {
+
+                            toast.success("Product Deleted Successfully");
 
 
+                    }
+                }).catch((error)=>{
+
+                        toast.error("Error occurred during deletion process");
+
+
+                }).finally(()=>{
+                    setTimeout(()=>{
+                        navigate('/');
+                    },1000);
+                })
+
+        }
+    }
 
 
     return (
-        <div className="  min-w-full ">
-            <div
-                className="hidden md:block min-h-1/2 flex  mx-auto justify-center items-center  px-3 py-2 rounded-2xl text-gray-600 mt-10 ">
-                <div className="flex h-1/2">
+        <div className="min-w-full p-4">
+            <ToastContainer/>
+            {/* Deletion Modal */}
+            {askClientForDeletion && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
+                        <h2 className="text-xl font-bold mb-4">Do You Want To Delete This Product?</h2>
+                        <div className="w-full px-4 flex justify-evenly">
+                            <button onClick={handleProductDeletion}
+                                    className="bg-green-600 text-white text-[1.1rem] px-4 py-1 rounded-md cursor-pointer hover:bg-green-700">
+                                Yes
+                            </button>
+                            <button onClick={() => setAskClientForDeletion(false)}
+                                    className="bg-red-500 text-white text-[1.1rem] px-4 py-1 rounded-md cursor-pointer hover:bg-red-600">
+                                No
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Main Product Container */}
+            <div className="max-w-6xl mx-auto mt-6 flex flex-col md:flex-row gap-8 items-center md:items-start">
+
+                {/* Image Section */}
+                <div className="w-full md:w-1/2 flex justify-center">
                     <div
-                        className= "w-[40vw] h-1/3  aspect-square overflow-hidden rounded-xl bg-gray-50 flex justify-center items-start shadow">
-                        <img className='w-fit h-1/2' src={`data:${product.imageType};base64,${product.imageData}`}
-                             alt={'image not found'} onError={(e) => {
-                            e.target.src = noimage
-                        }}/>
-                    </div>
-                    <div className="w-[60vw] flex flex-col items-baseline text-[1.2rem] px-6 py-2.5 gap-4">
-                        <div>
-                            <h1 className="font-bold text-2xl">{product.name}</h1>
-                        </div>
-                        <div className="flex flex-wrap gap-1 ">
-                            <span className="font-bold">Description: </span>
-                            <span className="inline-flex"> {product.description}</span>
-                        </div>
-                        <div>
-                            <span className="font-bold">Brand: </span>
-                            <span
-                                className={`${product.brand === null ? 'text-red-500' : null}`}>{(product.brand ? product.brand : 'Not Found').toWellFormed()}</span>
-                        </div>
-                        <div className="">
-                            <span className="font-bold">Category: </span>
-                            <span
-                                className=" px-2 py-1 bg-gray-400 text-white rounded-md text-[0.9rem] justify-center inline-flex"><span>{product.category}</span></span>
-                        </div>
-                        <div>
-                            <span className="font-bold">Release Date: </span>
-                            <span>{product.releaseDate}</span>
-                        </div>
-                        <div>
-                        <span
-                            className={` text-white px-2 py-1 rounded-md  ${(product.productAvailable) ? "bg-green-400" : "bg-red-500"}`}>{product.productAvailable ? "Available" : "Currently not Available"}</span>
-                        </div>
-
-                        <span className="font-bold text-2xl text-black">${product.price}</span>
-                        <div className="w-full">
-                         <button
-                             disabled={!product.productAvailable}
-                                onClick={()=>setAddedToCart(prev=>prev+1)}
-                                className="text-[1.2rem] w-[60%]  px-6 py-1 bg-blue-500 text-center items-center text-white rounded-md cursor-pointer">Add
-                                to Cart
-                            </button>
-
-                        </div>
-                        <div className="w-full flex justify-start space-x-1.5">
-                            <button
-
-                                className="text-[1.2rem] px-6 py-1 bg-red-500 text-center items-center text-white rounded-2xl">Delete
-                            </button>
-                            <button
-                                className="text-[1.2rem] px-6 py-1 bg-orange-400 text-center items-center text-white rounded-2xl">
-                                <Link to={`/product/update/${product.id}`} state={product.id}>
-                                Update
-                                </Link>
-                            </button>
-                            <ToastContainer/>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-            {/*mobile view for product*/}
-            <div className=" sm:visible md:hidden px-2 flex flex-col gap-2">
-                <div>
-                    <span className="text-[1.2rem] font-bold">{product.name}</span>
-                </div>
-                <div className="flex justify-center items-center py-1 ">
-                    <div
-                        className="relative w-[90vw]  h-[30vh] aspect-square  overflow-hidden rounded-xl bg-gray-50 flex justify-center items-center shadow">
-                        <img className='w-fit h-[90%]' src={`data:${product.imageType};base64,${product.imageData}`}
-                             alt={'image not found'} onError={(e) => {
-                            e.target.src = noimage
-                        }}/>
+                        className="relative w-full aspect-square max-h-[40vh] md:max-h-[50vh] overflow-hidden rounded-xl bg-gray-50 flex justify-center items-center shadow-md">
+                        <img
+                            className="h-[90%] w-auto object-contain"
+                            src={`data:${product.imageType};base64,${product.imageData}`}
+                            alt={product.name || 'Product Image'}
+                            onError={(e) => {
+                                e.target.src = noimage;
+                            }}
+                        />
                     </div>
                 </div>
-                <div className="flex flex-col items-baseline px-2 text-[1.2rem] text-gray-700  gap-2">
-                    <div className="w-full flex justify-between items-center">
-                         <span
-                             className={` text-white px-2 py-1 rounded-md  ${(product.productAvailable) ? "bg-green-400" : "bg-red-500"}`}>{product.productAvailable ? "Available" : "Currently not Available"}</span>
-                        <div className="">
-                            <span className="font-bold">Category: </span>
-                            <span
-                                className=" px-2 py-1 bg-gray-400 text-white rounded-md text-[0.9rem] justify-center inline-flex"><span>{product.category}</span></span>
-                        </div>
-                    </div>
-                    <div className='w-full flex justify-between items-center'>
-                        <div>
-                            <span className="font-medium">Price: </span>
-                            <span className="font-bold text-[] text-black">${product.price}</span>
-                        </div>
-                        <div>
-                            <span className="font-medium">Brand: </span>
-                            <span
-                                className={`${product.brand === null ? 'text-red-500' : null}`}>{(product.brand ? product.brand : 'Not Found').toWellFormed()}</span>
 
+
+                <div className="w-full md:w-1/2 flex flex-col gap-4 text-gray-700">
+                    <div>
+                        <h1 className="text-2xl md:text-3xl font-bold text-black">{product.name}</h1>
+                        <div className="flex items-center gap-3 mt-2">
+                    <span
+                        className={`text-white px-3 py-1 rounded-md text-sm font-medium ${product.productAvailable ? "bg-green-500" : "bg-red-500"}`}>
+                        {product.productAvailable ? "Available" : "Currently not Available"}
+                    </span>
+                            <span className="px-3 py-1 bg-gray-400 text-white rounded-md text-sm font-medium">
+                        {product.category}
+                    </span>
                         </div>
                     </div>
 
+                    <div className="text-3xl font-bold text-black">${product.price}</div>
 
-                    <div className="w-full">
-                        <span className=" font-medium">Description: </span>
-                        <span className=" text-[1rem]">{product.description}</span>
+                    <div className="space-y-2">
+                        <p><span className="font-bold">Brand: </span>
+                            <span className={!product.brand ? 'text-red-500' : ''}>
+                        {product.brand ? product.brand.toWellFormed() : 'Not Found'}
+                    </span>
+                        </p>
+                        <p><span className="font-bold">Release Date: </span> {product.releaseDate}</p>
+                        <p className="leading-relaxed">
+                            <span className="font-bold">Description: </span> {product.description}
+                        </p>
                     </div>
-                </div>
-                <div className='w-full flex flex-col py-2.5 gap-2'>
-                    <div className="w-full flex flex-col justify-center">
-                    <button
-                        disabled={!product.productAvailable}
-                        onClick={()=>setAddedToCart(prev=>prev+1)}
-                        className="text-[1.2rem] px-6 py-1 bg-blue-500 text-center items-center text-white rounded-2xl">Add
-                        to Cart
-                    </button>
 
-                    </div>
-                    <div className="w-full flex justify-evenly items-center">
+
+                    <div className="flex flex-col gap-3 mt-4">
                         <button
-                            className="text-[1.2rem] px-6 py-1 bg-red-500 text-center items-center text-white rounded-2xl">Delete
+                            disabled={!product.productAvailable}
+                            onClick={() => setAddedToCart(prev => prev + 1)}
+                            className="w-full md:w-2/3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-xl font-semibold transition-colors"
+                        >
+                            Add to Cart
                         </button>
-                        <button
-                            className="text-[1.2rem] px-6 py-1 bg-orange-400 text-center items-center text-white rounded-2xl">
-                            <Link to={`/product/update/${product.id}`} state={product.id}>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setAskClientForDeletion(true)}
+                                className="flex-1 md:flex-none md:px-10 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors"
+                            >
+                                Delete
+                            </button>
+                            <Link
+                                to={`/product/update/${product.id}`}
+                                state={product.id}
+                                className="flex-1 md:flex-none md:px-10 py-2 bg-orange-400 hover:bg-orange-500 text-white rounded-xl text-center transition-colors"
+                            >
                                 Update
                             </Link>
-                        </button>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>

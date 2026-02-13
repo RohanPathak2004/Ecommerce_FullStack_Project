@@ -1,38 +1,75 @@
 import {createContext, useContext, useEffect, useMemo, useState} from "react";
 import useLocalStorage from "../hooks/useLocalStorage.js";
+import {toast} from "react-toastify";
 
 const CartContext = createContext();
 
 export  const cartProvider = ({children}) =>{
     const [cart,setCart] = useLocalStorage("cart",[]);
-    const [customerDetails,setCustomerDetails] = useState({
-        customerName:"",
-        email:""
-    })
 
 
 
-    const addProductToCart = ({productId,quantity})=>{
+    const decreaseQuantity = (id,quantity)=>{
+        if(quantity===1) {
+            deleteFromTheCart(id);
+            return;
+        }
+        const localCart = cart.map((item)=>{
+            if(item.productId===id){
+                return {
+                    ...item,
+                    quantity:item.quantity-1
+                }
+            }else return item;
+        });
+
+        setCart(localCart);
+
+    }
+
+
+    const deleteFromTheCart = (id)=>{
+
+        let localCart=cart.filter(item=>item.productId !== id);
+        setCart(localCart)
+    }
+
+    const increaseQuantity = (id) =>{
+        const localCart = cart.map((item)=>{
+            if(item.productId===id){
+                let product = {
+                    ...item,
+                    quantity:item.quantity+1
+                }
+                return product;
+            }
+            else return item;
+
+        });
+        setCart(localCart);
+    }
+
+
+    const addProductToCart = ({productId,name,brand,imageFile,quantity,productPrice})=>{
         let flag = false;
         let localCart = [...cart];
         for(let i = 0; i<cart.length ; i++){
             if(localCart[i].productId===productId){
-                let q = localCart[i].quantity;
-                localCart[i] = {
-                    productId:productId,
-                    quantity:q+1
-                }
-                flag=true;
-                break;
+                return toast.success("Already added To the Cart")
+
             }
         }
         if(!flag){
             localCart.push({
                 productId:productId,
-                quantity:quantity
+                name:name,
+                brand:brand,
+                quantity:quantity,
+                productPrice:productPrice
             })
         }
         setCart(localCart);
+        return toast.success("Product Added To the Cart");
     }
 
     useEffect(()=>{
@@ -43,7 +80,11 @@ export  const cartProvider = ({children}) =>{
 
     const contextValues = {
         cart,
-        addProductToCart
+        addProductToCart,
+        deleteFromTheCart,
+        increaseQuantity,
+        decreaseQuantity,
+        setCart
     }
 
 

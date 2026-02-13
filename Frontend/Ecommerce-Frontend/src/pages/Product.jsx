@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Link, useLocation, useNavigate} from "react-router";
 import noimage from "../assets/noimage.png";
 import {ToastContainer, toast} from 'react-toastify';
@@ -10,6 +10,8 @@ const Product = ({setAddedToCart}) => {
     const location = useLocation();
     const product = location.state
     const [askClientForDeletion, setAskClientForDeletion] = useState(false);
+    const [imageFile,setImageFile] = useState();
+    const [onload,setOnload] = useState(false);
     const navigate = useNavigate();
     const {deleteProductMutation} = useProductContext();
     const {addProductToCart} = useCartContext();
@@ -23,6 +25,24 @@ const Product = ({setAddedToCart}) => {
         }
     }
 
+    const convertUrlToFile = async (blobData, fileName) => {
+        const file = new File([blobData], fileName, {type: blobData.type})
+        return file;
+    }
+    const fetchImage = async ()=>{
+        const resImage = await axios.get(`http://localhost:8080/api/product/${product.id}/image`,{responseType: "blob"}).then(resImage=>resImage.data);
+        const file = await convertUrlToFile(resImage,product.imageName);
+        setImageFile(file);
+        setOnload(true);
+        console.log(file);
+    }
+    useEffect( () =>{
+
+        fetchImage();
+        return ()=>{
+            setOnload(false);
+        }
+    },[product])
 
     return (
         <div className="min-w-full p-4">
@@ -55,7 +75,7 @@ const Product = ({setAddedToCart}) => {
                         className="relative w-full aspect-square max-h-[40vh] md:max-h-[50vh] overflow-hidden rounded-xl bg-gray-50 flex justify-center items-center shadow-md">
                         <img
                             className="h-[90%] w-auto object-contain"
-                            src={`data:${product.imageType};base64,${product.imageData}`}
+                            src={imageFile?URL.createObjectURL(imageFile):''}
                             alt={product.name || 'Product Image'}
                             onError={(e) => {
                                 e.target.src = noimage;
@@ -98,9 +118,13 @@ const Product = ({setAddedToCart}) => {
                         <button
                             disabled={!product.productAvailable||product.stockQuantity===0}
                             onClick={()=>{
-                                toast("Product Added To Cart");
+
                                 addProductToCart({
                                     productId:product.id,
+                                    name:product.name,
+                                    brand:product.brand,
+
+                                    productPrice:product.price,
                                     quantity:1
                                 })
                             }}

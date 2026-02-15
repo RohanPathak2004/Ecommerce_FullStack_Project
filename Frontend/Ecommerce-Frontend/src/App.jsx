@@ -18,21 +18,7 @@ const queryClient = new QueryClient();
 
 function App() {
 
-    const [addedToCart,setAddedToCart] = useState(0);
-    const [updateNotification,setUpdateNotification] = useState(0);
-    const addNotify = ()=>toast("Product Added To Cart")
-    const updateNotify = ()=>toast("Updated Product");
-    useEffect(()=>{
-        if(addedToCart===0) return;
-        console.log(addedToCart);
-        addNotify();
-    },[addedToCart])
 
-    useEffect(() => {
-        if(updateNotification===0) return;
-        console.log(updateNotification)
-        updateNotify();
-    }, [updateNotification]);
 
 
     const ContextComposer = ({providers,children})=>{
@@ -49,11 +35,11 @@ function App() {
                 <ToastContainer/>
                 <Routes>
                     <Route path={'/'} element={<Home/>}/>
-                    <Route path={'/product/:id'} element={<Product setAddedToCart={setAddedToCart}/>}/>
+                    <Route path={'/product/:id'} element={<Product/>}/>
                     <Route path={'/add'} element={<AddProduct/>}/>
                     <Route path={'/orders'} element={<Orders/>}/>
                     <Route path={'/cart'} element={<Cart/>}/>
-                    <Route path={'/product/update/:id'} element={<UpdateProduct setUpdateNotification={setUpdateNotification} />}/>
+                    <Route path={'/product/update/:id'} element={<UpdateProduct  />}/>
                 </Routes>
                 </ContextComposer>
             </QueryClientProvider>

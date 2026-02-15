@@ -24,7 +24,7 @@ const UpdateProduct = ({setUpdateNotification}) => {
 
     const {updateProductMutation} = useProductContext();
 
-    const notify  = ()=>toast("Updated Product!!")
+
     const fetchProduct = async (id) => {
         const res = await axios.get(`http://localhost:8080/api/product/${id}`).then(res => res.data);
         const resImage = await axios.get(`http://localhost:8080/api/product/${id}/image`, {responseType: "blob"}).then(res => res.data);
@@ -63,16 +63,16 @@ const UpdateProduct = ({setUpdateNotification}) => {
         const submittedProduct = {"product": {}, "imageFile": ""};
         submittedProduct.product = new Blob([JSON.stringify(updatedProduct)], {type: "application/json"});
         submittedProduct.imageFile = image;
-        console.log(submittedProduct);
+        // console.log(submittedProduct);
         try{
             await updateProductMutation({id:id, submittedProduct:submittedProduct});
         }catch (error){
-            console.log(error);
+           toast.error(error.message());
         }
 
     }
 
-    console.log(updatedProduct, image);
+    // console.log(updatedProduct, image);
     return (
         <div className="w-full   md:flex justify-center md:items-center">
             <ToastContainer/>

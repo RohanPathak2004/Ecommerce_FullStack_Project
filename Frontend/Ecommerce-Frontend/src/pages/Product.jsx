@@ -6,13 +6,13 @@ import axios from "axios";
 import {useProductContext} from "../context/ProductContext.jsx";
 import {useCartContext} from "../context/CartContext.jsx";
 
-const Product = ({setAddedToCart}) => {
+const Product = () => {
     const location = useLocation();
     const product = location.state
     const [askClientForDeletion, setAskClientForDeletion] = useState(false);
     const [imageFile,setImageFile] = useState();
     const [onload,setOnload] = useState(false);
-    const navigate = useNavigate();
+
     const {deleteProductMutation} = useProductContext();
     const {addProductToCart} = useCartContext();
     const handleProductDeletion = async () => {
@@ -34,7 +34,7 @@ const Product = ({setAddedToCart}) => {
         const file = await convertUrlToFile(resImage,product.imageName);
         setImageFile(file);
         setOnload(true);
-        console.log(file);
+        // console.log(file);
     }
     useEffect( () =>{
 

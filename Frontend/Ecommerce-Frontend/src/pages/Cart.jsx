@@ -8,20 +8,20 @@ import {useNavigate} from "react-router";
 
 const Cart = () => {
 
-    const {cart,setCart} = useCartContext();
+    const {cart, setCart} = useCartContext();
     const [customerDetails, setCustomerDetails] = useState({
         customerName: "",
         email: ""
     })
     const navigate = useNavigate();
-    console.log(cart);
+    // console.log(cart);
     const [totalPrice, setTotalPrice] = useState(0);
     const [reCalculate, setReCalculate] = useState(true);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
     const handleCheckout = async () => {
         setIsCheckingOut(true);
     }
-    console.log(totalPrice)
+    //for recalculating the totalPrice
     useEffect(() => {
         if (cart.length !== 0) {
             setTotalPrice(0);
@@ -36,6 +36,8 @@ const Cart = () => {
         }
     }, [reCalculate]);
 
+
+    //customer details
     const onChangeHandler = (e) => {
         const {name, value} = e.target;
         setCustomerDetails({
@@ -65,23 +67,22 @@ const Cart = () => {
             }))
         };
 
-        try {
-            const res = await axios.post('http://localhost:8080/api/orders/place', orderRequest);
 
-            if (res.status === 200 || res.status === 201) {
-                toast.success("Order Placed Successfully");
-                setCart([]); // Clear cart only on success
 
-                // Navigate after a short delay so they see the success toast
-                setTimeout(() => navigate('/'), 2000);
-            }
-        } catch (e) {
-            console.error("Order Error:", e);
-            toast.error(e.response?.data?.message || "Error in placing order");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        const res = await axios.post('http://localhost:8080/api/orders/place', orderRequest)
+            .then(res => {
+
+                    toast.success("Order Placed")
+                setCart([]);
+                setTimeout(()=>navigate('/'),1000);
+                }
+            ).catch(res => {
+                let errorMessage = (res.response.data).message;
+                toast.error(errorMessage);
+
+            });
+    }
+
 
 
     return (

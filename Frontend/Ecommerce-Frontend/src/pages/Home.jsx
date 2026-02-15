@@ -10,7 +10,7 @@ const Home = () => {
 
      const {products,isLoading,isError,error} = useProductContext();
 
-    console.log(products)
+    // console.log(products)
     if (isLoading) return (<div className='w-full text-2xl text-center h-full' >Loading products</div>)
     if (isError) return (<h1>Something went wrong..</h1>)
     return (

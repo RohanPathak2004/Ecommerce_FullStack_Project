@@ -1,9 +1,11 @@
 import React, {useState} from 'react'
 import Search from "./Search.jsx";
 import {Link} from "react-router";
+import {useCartContext} from "../context/CartContext.jsx";
 
 const NavigationBar = () => {
 
+    const {cart} = useCartContext();
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -32,13 +34,32 @@ const NavigationBar = () => {
                             </li>
                         </ul>
 
-                        <div className="flex items-center space-x-1.5 border-l pl-5 border-gray-200">
-                            <Link to="/cart" className="flex items-center space-x-1 text-gray-600 hover:text-blue-600">
-                                <span className="text-xl">🛒</span>
-                                <span className="font-medium">Cart</span>
+                        <div className="flex items-center space-x-6 border-l border-gray-200 pl-6 h-full">
+                            {/* Cart Link Container */}
+                            <Link
+                                to="/cart"
+                                className="group relative flex items-center gap-2 text-gray-700 transition-colors duration-200 hover:text-blue-600"
+                            >
+                                <div className="relative p-1">
+                                    {/* Icon - Using a slightly larger size and subtle scale effect on hover */}
+                                    <span
+                                        className="text-2xl transition-transform duration-200 group-hover:scale-110 block">
+        🛒
+      </span>
+
+                                    {/* Badge - Using flex for perfect centering and better positioning */}
+                                    {cart.length > 0 && (
+                                        <span
+                                            className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">{cart.length}</span>
+                                    )}
+                                </div>
+
+                                <span className="text-sm font-semibold tracking-wide">Cart</span>
                             </Link>
-                            <div>
-                            <Search />
+
+                            {/* Search Container */}
+                            <div className="pl-2 border-l border-gray-100">
+                                <Search/>
                             </div>
                         </div>
                     </div>
@@ -51,9 +72,11 @@ const NavigationBar = () => {
                         >
                             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 {isOpen ? (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                          d="M6 18L18 6M6 6l12 12"/>
                                 ) : (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                          d="M4 6h16M4 12h16M4 18h16"/>
                                 )}
                             </svg>
                         </button>
@@ -65,12 +88,18 @@ const NavigationBar = () => {
             {isOpen && (
                 <div className="md:hidden bg-gray-50 border-t border-gray-100">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
-                        <Link to="/" className="block px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-md">Home</Link>
-                        <Link to="/add" className="block px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-md">Add Product</Link>
-                        <Link to="/orders" className="block px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-md">Orders</Link>
-                        <Link to="/cart" className="block px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-md font-bold text-blue-600">Cart 🛒</Link>
+                        <Link to="/"
+                              className="block px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-md">Home</Link>
+                        <Link to="/add"
+                              className="block px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-md">Add
+                            Product</Link>
+                        <Link to="/orders"
+                              className="block px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-md">Orders</Link>
+                        <Link to="/cart"
+                              className="block px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-md font-bold text-blue-600">Cart
+                            🛒</Link>
                         <div className="py-2 px-3">
-                            <Search />
+                            <Search/>
                         </div>
                     </div>
                 </div>
